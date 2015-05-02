@@ -60,6 +60,9 @@ class JAXLLoop {
 	
 	private static $secs = 0;
 	private static $usecs = 30000;
+
+	private static $next_batch_cb;
+	private static $next_batch_time;
 	
 	private function __construct() {}
 	private function __clone() {}
@@ -108,7 +111,11 @@ class JAXLLoop {
 		if(!self::$is_running) {
 			self::$is_running = true;
 			self::$clock = new JAXLClock();
-			
+
+			if (self::$next_batch_time && self::$next_batch_cb) {
+				self::$clock->call_fun_periodic(self::$next_batch_time, self::$next_batch_cb);
+			}
+					
 			while((self::$active_read_fds + self::$active_write_fds) > 0)
 				self::select();
 			
@@ -154,6 +161,10 @@ class JAXLLoop {
 		}
 	}
 	
+	public static function set_next_batch_cb($cb, $time = 15000000) {
+		self::$next_batch_cb = $cb;
+		self::$next_batch_time = $time;
+	}
 }
 
 ?>
