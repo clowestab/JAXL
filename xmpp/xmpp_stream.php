@@ -106,6 +106,7 @@ abstract class XMPPStream extends JAXLFsm {
 	
 	public function __destruct() {
 		//_debug("cleaning up xmpp stream...");
+		$this->ev->emit('on_destruct');
 	}
 	
 	public function handle_invalid_state($r) {
